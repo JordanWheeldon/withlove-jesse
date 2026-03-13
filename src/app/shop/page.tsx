@@ -51,10 +51,10 @@ export default async function ShopPage({
   return (
     <div className="max-w-6xl mx-auto px-4 py-16">
       <div className="mb-12">
-        <h1 className="font-serif text-3xl md:text-4xl text-premium-brown mb-2">
+        <h1 className="font-serif text-3xl md:text-4xl text-premium-brown mb-2 tracking-tight" style={{ letterSpacing: "-0.02em" }}>
           Shop All Cards
         </h1>
-        <p className="text-premium-taupe">
+        <p className="text-premium-taupe max-w-xl">
           Personalised greeting cards for every occasion
         </p>
       </div>

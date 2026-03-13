@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getContentBlock } from "@/lib/content";
 import { HeroSection } from "@/components/storefront/HeroSection";
 import { HowItWorks } from "@/components/storefront/HowItWorks";
+import { TrustStrip } from "@/components/storefront/TrustStrip";
 import { CategoryGrid } from "@/components/storefront/CategoryGrid";
 import { PremiumProductCard } from "@/components/storefront/PremiumProductCard";
 import { PremiumBanner } from "@/components/storefront/PremiumBanner";
@@ -47,10 +48,12 @@ export default async function HomePage() {
         cta={heroButton || "Shop All Cards"}
       />
 
+      <TrustStrip />
+
       {categories.length > 0 && (
-        <section className="py-20 md:py-28 px-4 bg-premium-bg">
+        <section className="py-16 md:py-24 px-4 bg-premium-bg">
           <div className="max-w-6xl mx-auto">
-            <h2 className="font-serif text-2xl md:text-3xl text-premium-brown mb-12 text-center">
+            <h2 className="font-serif text-2xl md:text-3xl text-premium-brown mb-10 text-center tracking-tight" style={{ letterSpacing: "-0.02em" }}>
               Shop by occasion
             </h2>
             <CategoryGrid categories={categories} />
@@ -63,12 +66,12 @@ export default async function HomePage() {
         </section>
       )}
 
-      <section className="py-20 md:py-28 px-4 bg-premium-soft/30">
+      <section className="py-16 md:py-24 px-4 bg-premium-soft/30">
         <div className="max-w-6xl mx-auto">
-          <h2 className="font-serif text-2xl md:text-3xl text-premium-brown mb-12 text-center">
+          <h2 className="font-serif text-2xl md:text-3xl text-premium-brown mb-10 text-center tracking-tight" style={{ letterSpacing: "-0.02em" }}>
             Featured cards
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
             {products.map((product) => (
               <PremiumProductCard key={product.id} product={product} />
             ))}
@@ -96,9 +99,9 @@ export default async function HomePage() {
 
       <HowItWorks />
 
-      <section className="py-24 px-4 bg-premium-bg">
+      <section className="py-20 md:py-24 px-4 bg-premium-bg">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-serif text-2xl md:text-3xl text-premium-brown mb-4">
+          <h2 className="font-serif text-2xl md:text-3xl text-premium-brown mb-4 tracking-tight" style={{ letterSpacing: "-0.02em" }}>
             Made with care, sent with love
           </h2>
           <p className="text-premium-taupe leading-relaxed mb-8">
@@ -112,9 +115,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 px-4 bg-premium-soft/50">
+      <section className="py-16 md:py-20 px-4 bg-premium-soft/50">
         <div className="max-w-xl mx-auto text-center">
-          <p className="font-serif text-xl text-premium-brown mb-2">
+          <p className="font-serif text-xl text-premium-brown mb-2 tracking-tight">
             Join us for new designs and offers
           </p>
           <p className="text-sm text-premium-taupe mb-6">

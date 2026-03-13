@@ -25,7 +25,7 @@ export function PremiumBanner({
     "https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=1200&q=80";
 
   return (
-    <section className="relative py-24 md:py-32 overflow-hidden">
+    <section className="relative py-20 md:py-28 overflow-hidden">
       <div className="absolute inset-0">
         <Image src={bgImage} alt="" fill className="object-cover" sizes="100vw" />
         <div

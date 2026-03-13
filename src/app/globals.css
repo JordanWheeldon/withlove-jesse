@@ -35,12 +35,26 @@
   body {
     @apply bg-premium-bg text-premium-black antialiased;
   }
+
+  /* Premium typography — editorial, luxurious */
+  .font-serif {
+    letter-spacing: -0.02em;
+  }
 }
 
 /* Premium typography hierarchy */
-.prose-premium h1 { @apply font-serif text-4xl md:text-5xl lg:text-6xl font-medium text-premium-brown leading-tight tracking-tight; }
-.prose-premium h2 { @apply font-serif text-2xl md:text-3xl font-medium text-premium-brown; }
-.prose-premium p { @apply text-premium-taupe leading-relaxed; }
+.prose-premium h1 {
+  @apply font-serif text-4xl md:text-5xl lg:text-6xl font-medium text-premium-brown leading-[1.1] tracking-tight;
+  letter-spacing: -0.03em;
+}
+.prose-premium h2 {
+  @apply font-serif text-2xl md:text-3xl font-medium text-premium-brown leading-tight;
+  letter-spacing: -0.02em;
+}
+.prose-premium p {
+  @apply text-premium-taupe leading-relaxed;
+  max-width: 65ch;
+}
 
 @layer utilities {
   .text-balance {

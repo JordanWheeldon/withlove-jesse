@@ -124,9 +124,23 @@ export function AdminSidebar({
           ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
       >
-        <div className="flex items-center justify-between h-16 px-4 border-b border-sand-200 flex-shrink-0">
+        <div className="flex items-center gap-2 h-16 px-3 border-b border-sand-200 flex-shrink-0">
+          {onToggleCollapse && (
+            <button
+              onClick={onToggleCollapse}
+              className="p-2 -ml-1 rounded-lg text-premium-taupe hover:bg-premium-soft hover:text-premium-brown transition-colors shrink-0"
+              title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              {collapsed ? (
+                <ChevronRight className="h-5 w-5" />
+              ) : (
+                <ChevronLeft className="h-5 w-5" />
+              )}
+            </button>
+          )}
           {!collapsed && (
-            <Link href="/admin" className="font-serif text-lg font-medium text-premium-brown">
+            <Link href="/admin" className="font-serif text-lg font-medium text-premium-brown truncate">
               Withlove, Jesse
             </Link>
           )}
@@ -137,23 +151,7 @@ export function AdminSidebar({
           <NavSection items={SHOP} label="Shop" collapsed={collapsed} />
           <NavSection items={SYSTEM} label="System" collapsed={collapsed} />
         </nav>
-        <div className="p-2 border-t border-sand-200 space-y-1">
-          {onToggleCollapse && (
-            <button
-              onClick={onToggleCollapse}
-              className="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-lg text-sm text-premium-taupe hover:bg-premium-soft hover:text-premium-brown transition-colors"
-              title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            >
-              {collapsed ? (
-                <ChevronRight className="h-5 w-5" />
-              ) : (
-                <>
-                  <ChevronLeft className="h-5 w-5" />
-                  <span>Collapse</span>
-                </>
-              )}
-            </button>
-          )}
+        <div className="p-2 border-t border-sand-200">
           <Link
             href="/"
             target="_blank"

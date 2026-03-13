@@ -71,8 +71,9 @@ export function MediaUpload({
             </div>
           ) : (
             <div className="flex items-center gap-2 text-premium-taupe">
-              <FileImage className="h-8 w-8" />
-              <span className="text-sm truncate">{value}</span>
+              <FileImage className="h-8 w-8 shrink-0" />
+              <span className="text-sm truncate max-w-[200px]">{value}</span>
+              <span className="text-xs bg-sand-200 text-sand-600 px-1.5 py-0.5 rounded">PDF</span>
             </div>
           )}
           <div className="mt-2 flex gap-2">
@@ -99,12 +100,13 @@ export function MediaUpload({
       ) : (
         <div
           onClick={() => inputRef.current?.click()}
-          className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-sand-200 p-8 cursor-pointer hover:border-premium-accent hover:bg-premium-bg/50 transition-colors"
+          className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-sand-200 p-8 cursor-pointer hover:border-premium-accent hover:bg-premium-bg/50 transition-colors"
         >
           <Upload className="h-10 w-10 text-premium-taupe mb-2" />
-          <p className="text-sm text-premium-taupe">
+          <p className="text-sm text-premium-taupe text-center">
             {loading ? "Uploading..." : "Click to upload PNG, JPG, or PDF"}
           </p>
+          <p className="text-xs text-premium-taupe/70 mt-1">Max 10MB</p>
         </div>
       )}
       <input

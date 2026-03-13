@@ -21,9 +21,9 @@ export function ShopFilters({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 sticky top-24">
       <div>
-        <h3 className="font-medium text-premium-brown mb-3">Occasion</h3>
+        <h3 className="text-xs font-medium text-premium-taupe uppercase tracking-wider mb-3">Occasion</h3>
         <ul className="space-y-2">
           <li>
             <button
@@ -55,7 +55,7 @@ export function ShopFilters({
       </div>
 
       <div>
-        <h3 className="font-medium text-premium-brown mb-3">Sort by</h3>
+        <h3 className="text-xs font-medium text-premium-taupe uppercase tracking-wider mb-3">Sort by</h3>
         <select
           value={searchParams.get("sort") || "latest"}
           onChange={(e) => setFilter("sort", e.target.value || null)}

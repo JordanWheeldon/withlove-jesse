@@ -94,7 +94,7 @@ export default async function ProductPage({
 
         <div>
           <p className="text-premium-taupe text-sm mb-2 uppercase tracking-wider">{product.category.name}</p>
-          <h1 className="font-serif text-3xl md:text-4xl text-premium-brown mb-4">
+          <h1 className="font-serif text-3xl md:text-4xl text-premium-brown mb-4 tracking-tight" style={{ letterSpacing: "-0.02em" }}>
             {product.title}
           </h1>
 
@@ -135,11 +135,11 @@ export default async function ProductPage({
             </Button>
           )}
 
-          <div className="mt-8 pt-8 border-t border-sand-200">
-            <h3 className="font-medium text-premium-brown mb-2">
+          <div className="mt-8 pt-8 border-t border-sand-200 space-y-2">
+            <h3 className="font-medium text-premium-brown text-sm uppercase tracking-wider">
               Personalisation & delivery
             </h3>
-            <p className="text-sm text-premium-taupe">
+            <p className="text-sm text-premium-taupe leading-relaxed">
               {product.personalisationInstructions ||
                 "Add your personal message at checkout. Cards are printed to order and shipped within 3-5 working days."}
             </p>
