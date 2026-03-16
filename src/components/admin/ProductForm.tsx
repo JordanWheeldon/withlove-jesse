@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { MediaUpload } from "./MediaUpload";
+import { MediaLibraryPicker } from "./MediaLibraryPicker";
 import type { Product, ProductImage, Category } from "@prisma/client";
 
 type ProductWithImages = Product & { images: ProductImage[] };
@@ -27,9 +28,13 @@ export function ProductForm({
     const nonMain = product?.images.filter((i) => !i.isMain).sort((a, b) => a.sortOrder - b.sortOrder) ?? [];
     return nonMain.map((i) => i.url);
   });
+  const [showMainPicker, setShowMainPicker] = useState(false);
+  const [showGalleryPicker, setShowGalleryPicker] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setSubmitError(null);
     setLoading(true);
     const form = e.currentTarget;
     const fd = new FormData(form);
@@ -70,7 +75,10 @@ export function ProductForm({
     if (res.ok) {
       router.push("/admin/products");
       router.refresh();
+      return;
     }
+    const data = await res.json().catch(() => ({}));
+    setSubmitError((data.error as string) || "Failed to save product");
     setLoading(false);
   }
 
@@ -81,8 +89,6 @@ export function ProductForm({
       .replace(/[\s_-]+/g, "-")
       .replace(/^-+|-+$/g, "");
   }
-
-  const mainImage = product?.images.find((i) => i.isMain) || product?.images[0];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -175,12 +181,28 @@ export function ProductForm({
           onChange={setMainImageUrl}
           accept="image/png,image/jpeg,image/jpg"
         />
-        <p className="text-xs text-premium-taupe mt-1">Or paste image URL (use this on the live site)</p>
+        <div className="mt-2 flex flex-wrap gap-2 items-center">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setShowMainPicker(true)}
+          >
+            Choose from Media Library
+          </Button>
+          <span className="text-xs text-premium-taupe">or paste URL below</span>
+        </div>
         <Input
           value={mainImageUrl}
           onChange={(e) => setMainImageUrl(e.target.value)}
           placeholder="https://..."
           className="mt-2"
+        />
+        <MediaLibraryPicker
+          open={showMainPicker}
+          onClose={() => setShowMainPicker(false)}
+          onSelect={setMainImageUrl}
+          title="Choose main image"
         />
       </div>
       <div>
@@ -212,15 +234,33 @@ export function ProductForm({
               </Button>
             </div>
           ))}
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setGalleryUrls([...galleryUrls, ""])}
-          >
-            + Add image URL
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowGalleryPicker(true)}
+            >
+              Add from Media Library
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setGalleryUrls([...galleryUrls, ""])}
+            >
+              + Add image URL
+            </Button>
+          </div>
         </div>
+        <MediaLibraryPicker
+          open={showGalleryPicker}
+          onClose={() => setShowGalleryPicker(false)}
+          onSelect={(url) => {
+            setGalleryUrls((prev) => [...prev.filter(Boolean), url]);
+          }}
+          title="Add image to gallery"
+        />
       </div>
       <div>
         <Label htmlFor="personalisationInstructions">Personalisation instructions</Label>
@@ -309,6 +349,11 @@ export function ProductForm({
         <Label htmlFor="seoDescription">SEO description</Label>
         <Textarea id="seoDescription" name="seoDescription" defaultValue={product?.seoDescription || ""} rows={2} className="mt-2" />
       </div>
+      {submitError && (
+        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-2">
+          {submitError}
+        </p>
+      )}
       <div className="flex gap-4">
         <Button type="submit" disabled={loading}>
           {loading ? "Saving..." : product ? "Save changes" : "Create product"}

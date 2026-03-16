@@ -8,13 +8,31 @@ import { prisma } from "@/lib/prisma";
 
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg", "application/pdf"];
 const MAX_SIZE_LOCAL = 10 * 1024 * 1024; // 10MB for local
-const MAX_SIZE_BLOB = 4 * 1024 * 1024; // 4.5MB limit on Vercel serverless – use 4MB to be safe
+const MAX_SIZE_BLOB = 4 * 1024 * 1024; // 4MB on live site
+
+// Allow up to 60s so cold start + Blob upload can complete (Vercel Pro; Hobby may cap lower)
+export const maxDuration = 60;
 
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const isVercel = process.env.VERCEL === "1";
+    const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
+    const useBlob = !!blobToken;
+
+    // On Vercel we must use Blob; fail before reading the request body
+    if (isVercel && !blobToken) {
+      return NextResponse.json(
+        {
+          error:
+            "Uploads are disabled: add BLOB_READ_WRITE_TOKEN in Vercel → Settings → Environment Variables, then redeploy.",
+        },
+        { status: 503 }
+      );
     }
 
     const formData = await request.formData();
@@ -31,21 +49,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Invalid file type. Allowed: PNG, JPEG, JPG, PDF" },
         { status: 400 }
-      );
-    }
-
-    const isVercel = process.env.VERCEL === "1";
-    const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
-    const useBlob = !!blobToken;
-
-    // On Vercel we must use Blob; filesystem is read-only
-    if (isVercel && !blobToken) {
-      return NextResponse.json(
-        {
-          error:
-            "Uploads are disabled: add BLOB_READ_WRITE_TOKEN in Vercel → Settings → Environment Variables, then redeploy.",
-        },
-        { status: 503 }
       );
     }
 

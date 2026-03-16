@@ -33,7 +33,7 @@ export function MediaUpload({
     fd.set("file", file);
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 25000);
+    const timeoutId = setTimeout(() => controller.abort(), 55000);
 
     try {
       const res = await fetch("/api/admin/media/upload", {
@@ -60,7 +60,7 @@ export function MediaUpload({
     } catch (err) {
       clearTimeout(timeoutId);
       if (err instanceof Error && err.name === "AbortError") {
-        setError("Upload timed out. Go to Admin → Media Library, upload there, then paste the image URL below.");
+        setError("Upload timed out (first upload can be slow). Try a smaller image, or paste an image URL below.");
       } else {
         setError("Upload failed. Go to Admin → Media Library to upload, then paste the image URL here.");
       }

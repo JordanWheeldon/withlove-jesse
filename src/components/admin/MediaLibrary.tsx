@@ -45,21 +45,41 @@ export function MediaLibrary() {
     setUploadError(null);
     setUploading(true);
 
+    const UPLOAD_TIMEOUT_MS = 55000;
     let failed = 0;
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const fd = new FormData();
       fd.set("file", file);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), UPLOAD_TIMEOUT_MS);
       try {
-        const res = await fetch("/api/admin/media/upload", { method: "POST", body: fd });
-        const data = await res.json();
+        const res = await fetch("/api/admin/media/upload", {
+          method: "POST",
+          body: fd,
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+        let data: { error?: string };
+        try {
+          data = await res.json();
+        } catch {
+          setUploadError("Upload failed. Try a smaller image or paste an image URL on the product form.");
+          failed++;
+          continue;
+        }
         if (!res.ok) {
           failed++;
           setUploadError(data.error || "Upload failed");
         }
-      } catch {
+      } catch (err) {
+        clearTimeout(timeoutId);
         failed++;
-        setUploadError("Upload failed");
+        if (err instanceof Error && err.name === "AbortError") {
+          setUploadError("Upload timed out. Try one small image at a time, or paste an image URL when editing a product.");
+        } else {
+          setUploadError("Upload failed. Try a smaller image or use an image URL on the product form.");
+        }
       }
     }
 
