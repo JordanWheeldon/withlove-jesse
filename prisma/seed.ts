@@ -193,6 +193,14 @@ async function main() {
   const contentBlocks = [
     { key: "announcement_banner", content: "Free UK delivery on orders over £25" },
     { key: "hero_image", content: "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=1920&q=80" },
+    {
+      key: "hero_slides",
+      content: [
+        "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=1920&q=80",
+        "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=1920&q=80",
+        "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=1920&q=80",
+      ].join("\n"),
+    },
     { key: "hero_title", content: "Personalised cards, sent with love" },
     { key: "hero_subtitle", content: "Beautiful greeting cards for every occasion" },
     { key: "hero_button", content: "Shop All Cards" },

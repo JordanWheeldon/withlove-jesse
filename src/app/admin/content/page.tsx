@@ -9,7 +9,8 @@ export default async function AdminContentPage() {
 
   const keyToLabel: Record<string, string> = {
     announcement_banner: "Announcement banner (legacy - use Site Settings)",
-    hero_image: "Hero image URL",
+    hero_image: "Hero image URL (fallback when hero slides empty)",
+    hero_slides: "Hero carousel – one image URL per line",
     hero_title: "Homepage hero title",
     hero_subtitle: "Homepage hero subtitle",
     hero_button: "Homepage hero button text",
@@ -28,7 +29,7 @@ export default async function AdminContentPage() {
             key={block.id}
             block={block}
             label={keyToLabel[block.key] || block.key}
-            rows={block.key.includes("_content") ? 10 : 3}
+            rows={block.key.includes("_content") || block.key === "hero_slides" ? 10 : 3}
           />
         ))}
         {blocks.length === 0 && (

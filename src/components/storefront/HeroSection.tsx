@@ -2,41 +2,93 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect, useCallback } from "react";
 
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=1920&q=80";
+const ROTATE_MS = 5500;
+const SWIPE_THRESHOLD = 50;
 
 export function HeroSection({
-  imageUrl,
+  imageUrls = [],
   title,
   subtitle,
   cta,
 }: {
-  imageUrl?: string;
+  imageUrls?: string[];
   title: string;
   subtitle: string;
   cta: string;
 }) {
-  const src = imageUrl || FALLBACK_IMAGE;
+  const slides = imageUrls.length > 0 ? imageUrls : [FALLBACK_IMAGE];
+  const [index, setIndex] = useState(0);
+
+  const goTo = useCallback(
+    (i: number) => setIndex((prev) => (i + slides.length) % slides.length),
+    [slides.length]
+  );
+
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const id = setInterval(() => setIndex((i) => (i + 1) % slides.length), ROTATE_MS);
+    return () => clearInterval(id);
+  }, [slides.length]);
+
+  const x = useMotionValue(0);
+  useEffect(() => {
+    x.set(0);
+  }, [index, x]);
+  const opacity = useTransform(x, [-120, 0, 120], [0.4, 1, 0.4]);
+
+  const handleDragEnd = useCallback(
+    (_: unknown, info: PanInfo) => {
+      if (slides.length <= 1) return;
+      if (info.offset.x > SWIPE_THRESHOLD) goTo(index - 1);
+      else if (info.offset.x < -SWIPE_THRESHOLD) goTo(index + 1);
+    },
+    [index, goTo, slides.length]
+  );
+
+  const current = slides[index];
+
   return (
     <section className="relative min-h-[55vh] md:min-h-[60vh] flex items-center overflow-hidden">
+      {/* Background images with crossfade */}
       <div className="absolute inset-0">
-        <Image
-          src={src}
-          alt=""
-          fill
-          priority
-          className="object-cover object-center"
-          sizes="100vw"
-        />
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={current}
+            drag={slides.length > 1 ? "x" : false}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.2}
+            onDragEnd={handleDragEnd}
+            style={{ x: slides.length > 1 ? x : undefined, opacity: slides.length > 1 ? opacity : undefined }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute inset-0 touch-pan-y"
+          >
+            <Image
+              src={current}
+              alt=""
+              fill
+              priority={index === 0}
+              className="object-cover object-center pointer-events-none"
+              sizes="100vw"
+            />
+          </motion.div>
+        </AnimatePresence>
         <div
           className="absolute inset-0 bg-gradient-to-r from-premium-brown/50 via-premium-brown/25 to-transparent"
           aria-hidden
         />
       </div>
-      <div className="relative z-10 max-w-2xl mx-auto px-6 md:px-10 py-16 md:py-20">
+
+      {/* Content */}
+      <div className="relative z-10 max-w-2xl mx-auto px-6 md:px-10 py-16 md:py-20 w-full">
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -58,6 +110,7 @@ export function HeroSection({
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.18 }}
+          className="flex flex-wrap items-center gap-4"
         >
           <Button
             asChild
@@ -66,6 +119,24 @@ export function HeroSection({
           >
             <Link href="/shop">{cta}</Link>
           </Button>
+          {slides.length > 1 && (
+            <div className="flex items-center gap-2" aria-label="Hero slides">
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => goTo(i)}
+                  className={`h-2 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50 ${
+                    i === index
+                      ? "w-8 bg-white"
+                      : "w-2 bg-white/50 hover:bg-white/70"
+                  }`}
+                  aria-label={`Slide ${i + 1}`}
+                  aria-current={i === index ? "true" : undefined}
+                />
+              ))}
+            </div>
+          )}
         </motion.div>
       </div>
     </section>

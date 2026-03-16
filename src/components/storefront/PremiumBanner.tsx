@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 
 export function PremiumBanner({
@@ -23,13 +24,21 @@ export function PremiumBanner({
   const bgImage =
     image ||
     "https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=1200&q=80";
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 0.5, 1], ["-4%", "2%", "-2%"]);
 
   return (
-    <section className="relative py-20 md:py-28 overflow-hidden">
+    <section ref={ref} className="relative py-20 md:py-28 overflow-hidden">
       <div className="absolute inset-0">
-        <Image src={bgImage} alt="" fill className="object-cover" sizes="100vw" />
+        <motion.div style={{ y }} className="absolute inset-0 scale-110">
+          <Image src={bgImage} alt="" fill className="object-cover" sizes="100vw" />
+        </motion.div>
         <div
-          className="absolute inset-0 bg-premium-brown/50"
+          className="absolute inset-0 bg-premium-brown/50 pointer-events-none"
           aria-hidden
         />
       </div>

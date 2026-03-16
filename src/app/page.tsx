@@ -7,6 +7,7 @@ import { TrustStrip } from "@/components/storefront/TrustStrip";
 import { CategoryGrid } from "@/components/storefront/CategoryGrid";
 import { PremiumProductCard } from "@/components/storefront/PremiumProductCard";
 import { PremiumBanner } from "@/components/storefront/PremiumBanner";
+import { SectionReveal } from "@/components/storefront/SectionReveal";
 import { Button } from "@/components/ui/button";
 
 async function getFeaturedProducts() {
@@ -26,7 +27,7 @@ async function getActiveCategories() {
 }
 
 export default async function HomePage() {
-  const [products, categories, heroTitle, heroSubtitle, heroButton, heroImage] =
+  const [products, categories, heroTitle, heroSubtitle, heroButton, heroImage, heroSlides] =
     await Promise.all([
       getFeaturedProducts(),
       getActiveCategories(),
@@ -34,12 +35,23 @@ export default async function HomePage() {
       getContentBlock("hero_subtitle"),
       getContentBlock("hero_button"),
       getContentBlock("hero_image"),
+      getContentBlock("hero_slides"),
     ]);
+
+  const heroImageUrls =
+    heroSlides
+      ? heroSlides
+          .split(/\r?\n/)
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : heroImage
+        ? [heroImage]
+        : [];
 
   return (
     <div>
       <HeroSection
-        imageUrl={heroImage || undefined}
+        imageUrls={heroImageUrls}
         title={heroTitle || "Personalised cards, sent with love"}
         subtitle={
           heroSubtitle ||
@@ -51,7 +63,7 @@ export default async function HomePage() {
       <TrustStrip />
 
       {categories.length > 0 && (
-        <section className="py-16 md:py-24 px-4 bg-premium-bg">
+        <SectionReveal className="py-16 md:py-24 px-4 bg-premium-bg">
           <div className="max-w-6xl mx-auto">
             <h2 className="font-serif text-2xl md:text-3xl text-premium-brown mb-10 text-center tracking-tight" style={{ letterSpacing: "-0.02em" }}>
               Shop by occasion
@@ -63,10 +75,10 @@ export default async function HomePage() {
               </Button>
             </div>
           </div>
-        </section>
+        </SectionReveal>
       )}
 
-      <section className="py-16 md:py-24 px-4 bg-premium-soft/30">
+      <SectionReveal className="py-16 md:py-24 px-4 bg-premium-soft/30">
         <div className="max-w-6xl mx-auto">
           <h2 className="font-serif text-2xl md:text-3xl text-premium-brown mb-10 text-center tracking-tight" style={{ letterSpacing: "-0.02em" }}>
             Featured cards
@@ -87,7 +99,7 @@ export default async function HomePage() {
             </Button>
           </div>
         </div>
-      </section>
+      </SectionReveal>
 
       <PremiumBanner
         eyebrow="Seasonal"
@@ -99,7 +111,7 @@ export default async function HomePage() {
 
       <HowItWorks />
 
-      <section className="py-20 md:py-24 px-4 bg-premium-bg">
+      <SectionReveal className="py-20 md:py-24 px-4 bg-premium-bg">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="font-serif text-2xl md:text-3xl text-premium-brown mb-4 tracking-tight" style={{ letterSpacing: "-0.02em" }}>
             Made with care, sent with love
@@ -113,9 +125,9 @@ export default async function HomePage() {
             <Link href="/about">Our story</Link>
           </Button>
         </div>
-      </section>
+      </SectionReveal>
 
-      <section className="py-16 md:py-20 px-4 bg-premium-soft/50">
+      <SectionReveal className="py-16 md:py-20 px-4 bg-premium-soft/50">
         <div className="max-w-xl mx-auto text-center">
           <p className="font-serif text-xl text-premium-brown mb-2 tracking-tight">
             Join us for new designs and offers
@@ -132,7 +144,7 @@ export default async function HomePage() {
             <Button type="submit">Sign up</Button>
           </form>
         </div>
-      </section>
+      </SectionReveal>
     </div>
   );
 }
