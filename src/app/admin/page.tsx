@@ -12,7 +12,7 @@ import {
   Calendar,
   Tag,
   HelpCircle,
-  Image,
+  ImageIcon,
   AlertCircle,
   CheckCircle2,
   ChevronRight,
@@ -292,7 +292,7 @@ export default async function AdminDashboardPage() {
                       </div>
                     ) : (
                       <div className="w-10 h-10 rounded-lg bg-premium-soft flex items-center justify-center flex-shrink-0">
-                        <Image className="h-4 w-4 text-premium-taupe" aria-hidden="true" />
+                        <ImageIcon className="h-4 w-4 text-premium-taupe" aria-hidden="true" />
                       </div>
                     )}
                     <span className="text-premium-brown truncate">{p.title}</span>
