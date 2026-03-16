@@ -5,10 +5,11 @@ import { prisma } from "@/lib/prisma";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { id } = await params;
 
   const body = await request.json();
   const update: Record<string, unknown> = {};
@@ -25,7 +26,7 @@ export async function PATCH(
   }
 
   const promotion = await prisma.promotion.update({
-    where: { id: params.id },
+    where: { id },
     data: update,
   });
   return NextResponse.json(promotion);
@@ -33,10 +34,11 @@ export async function PATCH(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  await prisma.promotion.delete({ where: { id: params.id } });
+  const { id } = await params;
+  await prisma.promotion.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

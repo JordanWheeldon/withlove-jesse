@@ -53,6 +53,14 @@ npm run dev
 - **Storefront:** http://localhost:3000
 - **Admin:** http://localhost:3000/admin (`admin@withlovejesse.com` / `ChangeMe123!`)
 
+### Quick reference (live site)
+
+On Vercel (or your production URL), use the same paths:
+
+- **Site:** `https://your-domain.vercel.app`
+- **Admin:** `https://your-domain.vercel.app/admin`
+- **Login:** same as above (from seed or your `ADMIN_EMAIL` / `ADMIN_PASSWORD` in env). Get the exact production URL from Vercel → Project → Settings → Domains.
+
 ## Admin (fully functional)
 
 - **Dashboard** – Overview and quick actions
@@ -90,3 +98,7 @@ For production, replace the upload handler with S3, Cloudinary, or similar and s
 | `npm run db:push` | Push schema to DB    |
 | `npm run db:seed` | Seed demo data       |
 | `npm run db:studio` | Prisma Studio       |
+
+## Known npm warnings
+
+When you run `npm install` (locally or on Vercel), you may see deprecation warnings for some transitive dependencies. The project uses Next.js 15 and ESLint 9; any remaining warnings come from transitive deps and do **not** affect install, build, or runtime. You can ignore them.

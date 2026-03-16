@@ -6,9 +6,10 @@ import { FaqForm } from "@/components/admin/FaqForm";
 export default async function EditFaqPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const faq = await prisma.faq.findUnique({ where: { id: params.id } });
+  const { id } = await params;
+  const faq = await prisma.faq.findUnique({ where: { id } });
   if (!faq) notFound();
 
   return (

@@ -13,11 +13,12 @@ type SearchParams = { occasion?: string; sort?: string; search?: string };
 export default async function ShopPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
-  const occasion = searchParams.occasion;
-  const sort = searchParams.sort || "latest";
-  const search = searchParams.search;
+  const resolved = await searchParams;
+  const occasion = resolved.occasion;
+  const sort = resolved.sort || "latest";
+  const search = resolved.search;
 
   const products = await prisma.product.findMany({
     where: {

@@ -5,15 +5,17 @@ import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PersonalisationForm } from "@/components/shop/PersonalisationForm";
+import { AddToCartButton } from "@/components/shop/AddToCartButton";
 import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
+  const { slug } = await params;
   const product = await prisma.product.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
   });
   if (!product) return {};
   return {
@@ -25,10 +27,11 @@ export async function generateMetadata({
 export default async function ProductPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const { slug } = await params;
   const product = await prisma.product.findUnique({
-    where: { slug: params.slug, isActive: true },
+    where: { slug, isActive: true },
     include: { images: true, category: true },
   });
 
@@ -130,9 +133,7 @@ export default async function ProductPage({
               instructions={product.personalisationInstructions}
             />
           ) : (
-            <Button asChild size="lg">
-              <Link href="/cart">Add to cart</Link>
-            </Button>
+            <AddToCartButton product={product} />
           )}
 
           <div className="mt-8 pt-8 border-t border-sand-200 space-y-2">

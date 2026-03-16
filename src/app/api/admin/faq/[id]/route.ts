@@ -5,16 +5,17 @@ import { prisma } from "@/lib/prisma";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const { id } = await params;
   const body = await request.json();
   const { question, answer, sortOrder } = body;
   const faq = await prisma.faq.update({
-    where: { id: params.id },
+    where: { id },
     data: {
       ...(question !== undefined && { question }),
       ...(answer !== undefined && { answer }),
@@ -26,12 +27,13 @@ export async function PATCH(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  await prisma.faq.delete({ where: { id: params.id } });
+  const { id } = await params;
+  await prisma.faq.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

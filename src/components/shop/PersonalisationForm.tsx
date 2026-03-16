@@ -37,6 +37,7 @@ export function PersonalisationForm({
       const res = await fetch("/api/cart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
         body: JSON.stringify({
           productId: product.id,
           quantity: 1,

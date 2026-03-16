@@ -26,7 +26,7 @@ export function CartContents() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/cart")
+    fetch("/api/cart", { credentials: "same-origin" })
       .then((res) => res.json())
       .then((data) => {
         setCart(data.items || []);
@@ -38,6 +38,7 @@ export function CartContents() {
     const res = await fetch("/api/cart", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
       body: JSON.stringify({ productId, quantity }),
     });
     if (res.ok) {

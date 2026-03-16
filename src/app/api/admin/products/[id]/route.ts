@@ -5,12 +5,13 @@ import { prisma } from "@/lib/prisma";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const { id } = await params;
 
   const body = await request.json();
   const {
@@ -37,7 +38,7 @@ export async function PATCH(
   } = body;
 
   const product = await prisma.product.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: { images: true },
   });
 
@@ -73,7 +74,7 @@ export async function PATCH(
   if (seoDescription !== undefined) update.seoDescription = seoDescription;
 
   await prisma.product.update({
-    where: { id: params.id },
+    where: { id },
     data: update,
   });
 
@@ -98,7 +99,7 @@ export async function PATCH(
   }
 
   const updated = await prisma.product.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: { images: true },
   });
   return NextResponse.json(updated);
@@ -106,10 +107,11 @@ export async function PATCH(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  await prisma.product.delete({ where: { id: params.id } });
+  const { id } = await params;
+  await prisma.product.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }
