@@ -77,9 +77,11 @@ On Vercel (or your production URL), use the same paths:
 
 ## Uploads
 
-Files are stored in `public/uploads/`. Supported: PNG, JPEG, PDF. Max 10MB.
-
-For production, replace the upload handler with S3, Cloudinary, or similar and store URLs in the database.
+- **Local:** Files are stored in `public/uploads/`. Max 10MB.
+- **Production (Vercel):** The app uses **Vercel Blob** so you can upload images from your computer in the admin. Max 4MB per file on the live site. To enable it:
+  1. In the Vercel project, go to **Storage** → **Create Database** → **Blob**.
+  2. Create a Blob store (name it e.g. `withlovejesse-uploads`) and set access to **Public**.
+  3. The `BLOB_READ_WRITE_TOKEN` env var is added automatically. Redeploy so the API can upload.
 
 ## Deployment
 

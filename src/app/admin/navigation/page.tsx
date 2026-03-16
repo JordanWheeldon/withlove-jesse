@@ -6,6 +6,8 @@ import { NavigationList } from "@/components/admin/NavigationList";
 import { Button } from "@/components/ui/button";
 import { Menu, Plus } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminNavigationPage() {
   const items = await prisma.navigationItem.findMany({ orderBy: { sortOrder: "asc" } });
   const headerItems = items.filter((i) => i.location === "header");

@@ -32,21 +32,38 @@ export function MediaUpload({
     const fd = new FormData();
     fd.set("file", file);
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 25000);
+
     try {
       const res = await fetch("/api/admin/media/upload", {
         method: "POST",
         body: fd,
+        signal: controller.signal,
       });
-      const data = await res.json();
+      clearTimeout(timeoutId);
+
+      let data: { url?: string; error?: string };
+      try {
+        data = await res.json();
+      } catch {
+        setError("Upload failed. Try Admin → Media Library to upload, then paste the image URL here.");
+        return;
+      }
 
       if (!res.ok) {
         setError(data.error || "Upload failed");
         return;
       }
 
-      onChange(data.url);
-    } catch {
-      setError("Upload failed");
+      if (data.url) onChange(data.url);
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err instanceof Error && err.name === "AbortError") {
+        setError("Upload timed out. Go to Admin → Media Library, upload there, then paste the image URL below.");
+      } else {
+        setError("Upload failed. Go to Admin → Media Library to upload, then paste the image URL here.");
+      }
     } finally {
       setLoading(false);
       e.target.value = "";
@@ -106,7 +123,7 @@ export function MediaUpload({
           <p className="text-sm text-premium-taupe text-center">
             {loading ? "Uploading..." : "Click to upload PNG, JPG, or PDF"}
           </p>
-          <p className="text-xs text-premium-taupe/70 mt-1">Max 10MB</p>
+          <p className="text-xs text-premium-taupe/70 mt-1">Max 10MB (local) or 4MB (live site). Or paste an image URL below.</p>
         </div>
       )}
       <input

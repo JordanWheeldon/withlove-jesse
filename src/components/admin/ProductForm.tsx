@@ -23,6 +23,10 @@ export function ProductForm({
   const [mainImageUrl, setMainImageUrl] = useState(
     () => (product?.images.find((i) => i.isMain) || product?.images[0])?.url || ""
   );
+  const [galleryUrls, setGalleryUrls] = useState<string[]>(() => {
+    const nonMain = product?.images.filter((i) => !i.isMain).sort((a, b) => a.sortOrder - b.sortOrder) ?? [];
+    return nonMain.map((i) => i.url);
+  });
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -52,6 +56,7 @@ export function ProductForm({
       seoTitle: fd.get("seoTitle") || undefined,
       seoDescription: fd.get("seoDescription") || undefined,
       mainImageUrl: mainImageUrl || undefined,
+      galleryUrls: galleryUrls.filter(Boolean),
     };
 
     const url = product ? `/api/admin/products/${product.id}` : "/api/admin/products";
@@ -170,13 +175,52 @@ export function ProductForm({
           onChange={setMainImageUrl}
           accept="image/png,image/jpeg,image/jpg"
         />
-        <p className="text-xs text-premium-taupe mt-1">Or paste image URL</p>
+        <p className="text-xs text-premium-taupe mt-1">Or paste image URL (use this on the live site)</p>
         <Input
           value={mainImageUrl}
           onChange={(e) => setMainImageUrl(e.target.value)}
           placeholder="https://..."
           className="mt-2"
         />
+      </div>
+      <div>
+        <Label>Additional images (gallery)</Label>
+        <p className="text-xs text-premium-taupe mt-1 mb-2">
+          Add more image URLs for the product page gallery. One per line or use the inputs below.
+        </p>
+        <div className="space-y-2">
+          {galleryUrls.map((url, i) => (
+            <div key={i} className="flex gap-2">
+              <Input
+                value={url}
+                onChange={(e) => {
+                  const next = [...galleryUrls];
+                  next[i] = e.target.value;
+                  setGalleryUrls(next);
+                }}
+                placeholder="https://..."
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="text-red-600 shrink-0"
+                onClick={() => setGalleryUrls(galleryUrls.filter((_, j) => j !== i))}
+              >
+                ×
+              </Button>
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setGalleryUrls([...galleryUrls, ""])}
+          >
+            + Add image URL
+          </Button>
+        </div>
       </div>
       <div>
         <Label htmlFor="personalisationInstructions">Personalisation instructions</Label>

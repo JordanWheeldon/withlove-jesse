@@ -11,6 +11,8 @@ const KEYS = [
   { key: "shipping_notice", label: "Shipping notice" },
 ];
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminSettingsPage() {
   const rows = await prisma.siteSettings.findMany();
   const settings: Record<string, string> = {};

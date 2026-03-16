@@ -1,18 +1,13 @@
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
-import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
-import { Image } from "lucide-react";
+import { MediaLibrary } from "@/components/admin/MediaLibrary";
 
 export default function AdminMediaPage() {
   return (
     <AdminPageShell
       title="Media Library"
-      description="Manage images for products, hero, and banners."
+      description="Upload pictures from your computer. Use these images when adding or editing products."
     >
-      <AdminEmptyState
-        icon={Image}
-        title="Media library coming soon"
-        description="Upload and manage images in one place. For now, use image URLs in product and content editors."
-      />
+      <MediaLibrary />
     </AdminPageShell>
   );
 }

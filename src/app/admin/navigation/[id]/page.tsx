@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { NavigationForm } from "@/components/admin/NavigationForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function EditNavItemPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const item = await prisma.navigationItem.findUnique({ where: { id } });

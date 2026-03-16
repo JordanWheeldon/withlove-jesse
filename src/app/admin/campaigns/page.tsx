@@ -7,6 +7,8 @@ import { CampaignList } from "@/components/admin/CampaignList";
 import { Button } from "@/components/ui/button";
 import { Calendar, Plus } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminCampaignsPage() {
   const campaigns = await prisma.seasonalCampaign.findMany({
     orderBy: { homepageOrder: "asc" },

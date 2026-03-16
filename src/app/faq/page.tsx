@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
 export const metadata = {
   title: "FAQ",
   description: "Frequently asked questions about our personalised greeting cards.",

@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
     insideMessageLimit,
     senderNameLimit,
     mainImageUrl,
+    galleryUrls,
     seoTitle,
     seoDescription,
   } = body;
@@ -81,6 +82,19 @@ export async function POST(request: NextRequest) {
         alt: title,
         isMain: true,
         sortOrder: 0,
+      },
+    });
+  }
+
+  const urls = Array.isArray(galleryUrls) ? galleryUrls.filter((u) => typeof u === "string" && u.trim()) : [];
+  for (let i = 0; i < urls.length; i++) {
+    await prisma.productImage.create({
+      data: {
+        productId: product.id,
+        url: urls[i].trim(),
+        alt: title,
+        isMain: false,
+        sortOrder: i + 1,
       },
     });
   }

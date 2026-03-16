@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { PromotionForm } from "@/components/admin/PromotionForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function EditPromotionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const promotion = await prisma.promotion.findUnique({ where: { id } });

@@ -3,6 +3,7 @@ import { ProductGrid } from "@/components/shop/ProductGrid";
 import { ShopFilters } from "@/components/shop/ShopFilters";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Shop All Cards",
   description: "Browse our collection of personalised greeting cards for every occasion.",

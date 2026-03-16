@@ -33,6 +33,7 @@ export async function PATCH(
     insideMessageLimit,
     senderNameLimit,
     mainImageUrl,
+    galleryUrls,
     seoTitle,
     seoDescription,
   } = body;
@@ -78,14 +79,14 @@ export async function PATCH(
     data: update,
   });
 
-  if (mainImageUrl) {
+  if (mainImageUrl !== undefined) {
     const mainImg = product.images.find((i) => i.isMain);
     if (mainImg) {
       await prisma.productImage.update({
         where: { id: mainImg.id },
         data: { url: mainImageUrl },
       });
-    } else {
+    } else if (mainImageUrl) {
       await prisma.productImage.create({
         data: {
           productId: product.id,
@@ -93,6 +94,25 @@ export async function PATCH(
           alt: title || product.title,
           isMain: true,
           sortOrder: 0,
+        },
+      });
+    }
+  }
+
+  if (galleryUrls !== undefined) {
+    const nonMain = product.images.filter((i) => !i.isMain);
+    for (const img of nonMain) {
+      await prisma.productImage.delete({ where: { id: img.id } });
+    }
+    const urls = Array.isArray(galleryUrls) ? galleryUrls.filter((u) => typeof u === "string" && u.trim()) : [];
+    for (let i = 0; i < urls.length; i++) {
+      await prisma.productImage.create({
+        data: {
+          productId: product.id,
+          url: urls[i].trim(),
+          alt: product.title,
+          isMain: false,
+          sortOrder: i + 1,
         },
       });
     }

@@ -6,6 +6,8 @@ import { PromotionList } from "@/components/admin/PromotionList";
 import { Button } from "@/components/ui/button";
 import { Tag, Plus } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPromotionsPage() {
   const promotions = await prisma.promotion.findMany();
 

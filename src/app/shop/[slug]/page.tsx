@@ -8,6 +8,8 @@ import { PersonalisationForm } from "@/components/shop/PersonalisationForm";
 import { AddToCartButton } from "@/components/shop/AddToCartButton";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {

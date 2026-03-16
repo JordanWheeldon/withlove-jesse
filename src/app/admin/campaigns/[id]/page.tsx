@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { CampaignForm } from "@/components/admin/CampaignForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function EditCampaignPage({
   params,
 }: {

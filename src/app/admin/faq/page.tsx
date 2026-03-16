@@ -6,6 +6,8 @@ import { FaqList } from "@/components/admin/FaqList";
 import { Button } from "@/components/ui/button";
 import { HelpCircle, Plus } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminFaqPage() {
   const faqs = await prisma.faq.findMany({ orderBy: { sortOrder: "asc" } });
 

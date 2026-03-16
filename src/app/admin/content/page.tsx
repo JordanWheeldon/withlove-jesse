@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { ContentEditor } from "@/components/admin/ContentEditor";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminContentPage() {
   const blocks = await prisma.editableContentBlock.findMany({
     orderBy: { key: "asc" },

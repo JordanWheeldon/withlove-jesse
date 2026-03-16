@@ -6,6 +6,8 @@ import { formatPrice } from "@/lib/utils";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 
+export const dynamic = "force-dynamic";
+
 export default async function OrderDetailPage({
   params,
 }: {

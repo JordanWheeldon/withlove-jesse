@@ -10,6 +10,8 @@ import { PremiumBanner } from "@/components/storefront/PremiumBanner";
 import { SectionReveal } from "@/components/storefront/SectionReveal";
 import { Button } from "@/components/ui/button";
 
+export const dynamic = "force-dynamic";
+
 async function getFeaturedProducts() {
   return prisma.product.findMany({
     where: { isActive: true, isFeatured: true },

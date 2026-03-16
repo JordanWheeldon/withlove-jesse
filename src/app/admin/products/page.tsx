@@ -8,6 +8,8 @@ import { formatPrice } from "@/lib/utils";
 import Image from "next/image";
 import { Plus, Pencil } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminProductsPage() {
   const products = await prisma.product.findMany({
     include: { images: true, category: true },

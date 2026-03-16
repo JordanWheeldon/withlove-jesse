@@ -5,6 +5,8 @@ import { StatusBadge } from "@/components/admin/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Pencil, Plus } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminCategoriesPage() {
   const categories = await prisma.category.findMany({
     orderBy: { sortOrder: "asc" },

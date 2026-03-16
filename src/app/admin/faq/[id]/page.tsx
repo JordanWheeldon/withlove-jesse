@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { FaqForm } from "@/components/admin/FaqForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function EditFaqPage({
   params,
 }: {
