@@ -6,7 +6,7 @@ import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { prisma } from "@/lib/prisma";
 
-const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg", "application/pdf"];
+const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp", "application/pdf"];
 const MAX_SIZE_LOCAL = 10 * 1024 * 1024; // 10MB for local
 const MAX_SIZE_BLOB = 4 * 1024 * 1024; // 4MB on live site
 
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
     if (!ALLOWED_TYPES.includes(file.type)) {
       return NextResponse.json(
-        { error: "Invalid file type. Allowed: PNG, JPEG, JPG, PDF" },
+        { error: "Invalid file type. Allowed: PNG, JPEG, JPG, WebP, PDF" },
         { status: 400 }
       );
     }

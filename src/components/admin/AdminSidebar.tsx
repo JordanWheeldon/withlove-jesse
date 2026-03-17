@@ -9,7 +9,6 @@ import {
   Calendar,
   Tag,
   FileText,
-  Layout,
   Menu,
   ClipboardList,
   Users,
@@ -28,34 +27,36 @@ import {
 
 type NavItem = { href: string; label: string; icon: React.ComponentType<{ className?: string }> };
 
-const MAIN: NavItem[] = [
+const OVERVIEW: NavItem[] = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+];
+
+const CATALOG: NavItem[] = [
   { href: "/admin/products", label: "Products", icon: Package },
-  { href: "/admin/categories", label: "Categories", icon: FolderOpen },
-  { href: "/admin/campaigns", label: "Seasonal Campaigns", icon: Calendar },
-  { href: "/admin/promotions", label: "Promotions", icon: Tag },
+  { href: "/admin/categories", label: "Collections & Occasions", icon: FolderOpen },
+  { href: "/admin/campaigns", label: "Campaigns", icon: Calendar },
 ];
 
 const CONTENT: NavItem[] = [
-  { href: "/admin/homepage", label: "Homepage Sections", icon: Layout },
-  { href: "/admin/content", label: "Content Blocks", icon: FileText },
+  { href: "/admin/promotions", label: "Banners & Promotions", icon: Tag },
+  { href: "/admin/content", label: "Content", icon: FileText },
   { href: "/admin/faq", label: "FAQ", icon: HelpCircle },
-  { href: "/admin/navigation", label: "Navigation Menus", icon: Menu },
-  { href: "/admin/policies", label: "Policies Pages", icon: FileCheck },
-  { href: "/admin/contact", label: "Contact Details", icon: Mail },
+  { href: "/admin/navigation", label: "Menus & Footer", icon: Menu },
+  { href: "/admin/policies", label: "Policies", icon: FileCheck },
+  { href: "/admin/contact", label: "Contact", icon: Mail },
 ];
 
-const SHOP: NavItem[] = [
+const COMMERCE: NavItem[] = [
   { href: "/admin/orders", label: "Orders", icon: ClipboardList },
   { href: "/admin/customers", label: "Customers", icon: Users },
 ];
 
-const SYSTEM: NavItem[] = [
+const MEDIA_SETTINGS: NavItem[] = [
   { href: "/admin/media", label: "Media Library", icon: Image },
-  { href: "/admin/seo", label: "SEO Settings", icon: Search },
+  { href: "/admin/seo", label: "SEO & Site Settings", icon: Search },
   { href: "/admin/settings", label: "Site Settings", icon: Settings },
   { href: "/admin/appearance", label: "Appearance", icon: Palette },
-  { href: "/admin/users", label: "Admin Access", icon: Shield },
+  { href: "/admin/users", label: "Admin Users", icon: Shield },
 ];
 
 function NavSection({
@@ -146,10 +147,11 @@ export function AdminSidebar({
           )}
         </div>
         <nav className="flex-1 overflow-y-auto py-4 px-2">
-          <NavSection items={MAIN} label="Main" collapsed={collapsed} />
+          <NavSection items={OVERVIEW} label="Overview" collapsed={collapsed} />
+          <NavSection items={CATALOG} label="Catalog" collapsed={collapsed} />
           <NavSection items={CONTENT} label="Content" collapsed={collapsed} />
-          <NavSection items={SHOP} label="Shop" collapsed={collapsed} />
-          <NavSection items={SYSTEM} label="System" collapsed={collapsed} />
+          <NavSection items={COMMERCE} label="Commerce" collapsed={collapsed} />
+          <NavSection items={MEDIA_SETTINGS} label="Media & Settings" collapsed={collapsed} />
         </nav>
         <div className="p-2 border-t border-sand-200">
           <Link

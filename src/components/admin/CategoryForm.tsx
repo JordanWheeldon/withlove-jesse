@@ -66,7 +66,7 @@ export function CategoryForm({ category }: { category?: Category }) {
         />
       </div>
       <div>
-        <Label htmlFor="slug">Slug (URL)</Label>
+        <Label htmlFor="slug">Page URL</Label>
         <Input
           id="slug"
           name="slug"

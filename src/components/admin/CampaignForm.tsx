@@ -60,7 +60,7 @@ export function CampaignForm({ campaign }: { campaign?: SeasonalCampaign }) {
         <Input id="name" name="name" defaultValue={campaign?.name} required className="mt-2" />
       </div>
       <div>
-        <Label htmlFor="slug">Slug</Label>
+        <Label htmlFor="slug">Page URL</Label>
         <Input id="slug" name="slug" defaultValue={campaign?.slug} placeholder="auto" className="mt-2" />
       </div>
       <div className="grid grid-cols-2 gap-4">

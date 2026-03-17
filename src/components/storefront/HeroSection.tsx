@@ -54,7 +54,7 @@ export function HeroSection({
   const current = slides[index];
 
   return (
-    <section className="relative min-h-[55vh] md:min-h-[60vh] flex items-center overflow-hidden">
+    <section className="relative min-h-[38vh] md:min-h-[42vh] flex items-center overflow-hidden">
       {/* Background images with crossfade */}
       <div className="absolute inset-0">
         <AnimatePresence mode="wait" initial={false}>
@@ -88,12 +88,12 @@ export function HeroSection({
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-2xl mx-auto px-6 md:px-10 py-16 md:py-20 w-full">
+      <div className="relative z-10 max-w-2xl mx-auto px-6 md:px-10 py-10 md:py-12 w-full">
         <motion.h1
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="font-serif text-3xl md:text-4xl lg:text-5xl font-medium text-white tracking-tight leading-[1.12] mb-4 drop-shadow-sm"
+          className="font-serif text-2xl md:text-3xl lg:text-4xl font-medium text-white tracking-tight leading-[1.15] mb-3 drop-shadow-sm"
           style={{ letterSpacing: "-0.03em" }}
         >
           {title}
@@ -102,7 +102,7 @@ export function HeroSection({
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="text-base md:text-lg text-white/95 mb-8 max-w-xl leading-relaxed"
+          className="text-sm md:text-base text-white/95 mb-6 max-w-xl leading-relaxed"
         >
           {subtitle}
         </motion.p>
@@ -110,7 +110,7 @@ export function HeroSection({
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.18 }}
-          className="flex flex-wrap items-center gap-4"
+          className="flex flex-wrap items-center gap-3"
         >
           <Button
             asChild

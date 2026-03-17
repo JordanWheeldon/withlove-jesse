@@ -3,6 +3,49 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-config";
 import { prisma } from "@/lib/prisma";
 
+export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const { searchParams } = new URL(request.url);
+  const search = searchParams.get("search")?.trim() || "";
+  const categoryId = searchParams.get("categoryId") || "";
+  const status = searchParams.get("status") || "all"; // all | active | inactive
+  const featured = searchParams.get("featured") === "true";
+  const bestSeller = searchParams.get("bestSeller") === "true";
+  const newArrival = searchParams.get("newArrival") === "true";
+  const sort = searchParams.get("sort") || "sortOrder"; // sortOrder | title | price
+
+  const where: Record<string, unknown> = {};
+  if (search) {
+    where.OR = [
+      { title: { contains: search, mode: "insensitive" } },
+      { slug: { contains: search, mode: "insensitive" } },
+    ];
+  }
+  if (categoryId) where.categoryId = categoryId;
+  if (status === "active") where.isActive = true;
+  if (status === "inactive") where.isActive = false;
+  if (featured) where.isFeatured = true;
+  if (bestSeller) where.isBestSeller = true;
+  if (newArrival) where.isNewArrival = true;
+
+  const orderBy =
+    sort === "title"
+      ? { title: "asc" as const }
+      : sort === "price"
+        ? { price: "asc" as const }
+        : { sortOrder: "asc" as const };
+
+  const products = await prisma.product.findMany({
+    where,
+    include: { images: true, category: true },
+    orderBy,
+  });
+  return NextResponse.json(products);
+}
+
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user) {

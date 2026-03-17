@@ -15,8 +15,8 @@ export default async function AdminCategoriesPage() {
 
   return (
     <AdminPageShell
-      title="Categories"
-      description="Manage occasions and product categories."
+      title="Collections & Occasions"
+      description="Manage occasions and product categories. Assign products to these in the product editor."
       action={
         <Button asChild>
           <Link href="/admin/categories/new" className="flex items-center gap-2">
@@ -31,7 +31,7 @@ export default async function AdminCategoriesPage() {
           <thead>
             <tr className="border-b border-sand-200 bg-premium-soft/50">
               <th className="text-left p-4 font-medium text-premium-brown">Name</th>
-              <th className="text-left p-4 font-medium text-premium-brown">Slug</th>
+              <th className="text-left p-4 font-medium text-premium-brown">Page URL</th>
               <th className="text-left p-4 font-medium text-premium-brown">Products</th>
               <th className="text-left p-4 font-medium text-premium-brown">Status</th>
               <th className="w-16 p-4"></th>

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Upload, X, FileImage } from "lucide-react";
 
-const ACCEPT = "image/png,image/jpeg,image/jpg,application/pdf";
+const ACCEPT = "image/png,image/jpeg,image/jpg,image/webp,application/pdf";
 
 export function MediaUpload({
   value,

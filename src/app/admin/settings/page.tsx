@@ -4,7 +4,8 @@ import { SettingsForm } from "@/components/admin/SettingsForm";
 
 const KEYS = [
   { key: "site_title", label: "Site title" },
-  { key: "announcement_bar", label: "Announcement bar text" },
+  { key: "announcement_bar", label: "Announcement bar (single line)" },
+  { key: "announcement_marquee", label: "Announcement marquee (one message per line; overrides single line)" },
   { key: "contact_email", label: "Contact email" },
   { key: "contact_phone", label: "Contact phone" },
   { key: "contact_intro", label: "Contact page intro" },

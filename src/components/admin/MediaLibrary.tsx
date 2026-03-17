@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload, Copy, Check, Image as ImageIcon } from "lucide-react";
+import { Upload, Copy, Check, Image as ImageIcon, Trash2, FileText } from "lucide-react";
 
 type MediaAsset = {
   id: string;
@@ -13,6 +13,14 @@ type MediaAsset = {
   alt: string | null;
   createdAt: string;
 };
+
+function fileTypeLabel(mime: string): string {
+  if (mime === "image/png") return "PNG";
+  if (mime === "image/jpeg" || mime === "image/jpg") return "JPG";
+  if (mime === "image/webp") return "WebP";
+  if (mime === "application/pdf") return "PDF";
+  return mime.split("/")[1]?.toUpperCase() ?? "File";
+}
 
 export function MediaLibrary() {
   const [assets, setAssets] = useState<MediaAsset[]>([]);
@@ -106,17 +114,17 @@ export function MediaLibrary() {
         <input
           id="media-upload-input"
           type="file"
-          accept="image/png,image/jpeg,image/jpg"
+          accept="image/png,image/jpeg,image/jpg,image/webp,application/pdf"
           multiple
           onChange={handleFiles}
           className="hidden"
         />
         <Upload className="h-14 w-14 text-premium-brown mb-4" />
         <p className="text-lg font-medium text-premium-brown mb-1">
-          {uploading ? "Uploading…" : "Add pictures from your computer"}
+          {uploading ? "Uploading…" : "Add files from your computer"}
         </p>
         <p className="text-sm text-premium-taupe">
-          Click here or drag files. PNG, JPG. Max 4MB on live site, 10MB locally.
+          PNG, JPG, WebP, PDF. Max 4MB on live site, 10MB locally.
         </p>
       </div>
 
@@ -139,9 +147,9 @@ export function MediaLibrary() {
             {assets.map((asset) => (
               <div
                 key={asset.id}
-                className="rounded-xl border border-sand-200 bg-white overflow-hidden shadow-sm"
+                className="rounded-xl border border-sand-200 bg-white overflow-hidden shadow-sm group"
               >
-                <div className="aspect-square bg-premium-soft flex items-center justify-center">
+                <div className="aspect-square bg-premium-soft flex items-center justify-center relative">
                   {isImage(asset.mimeType) ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -150,27 +158,46 @@ export function MediaLibrary() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <ImageIcon className="h-12 w-12 text-premium-taupe" />
+                    <FileText className="h-12 w-12 text-premium-taupe" />
                   )}
+                  <span className="absolute top-2 right-2 text-xs font-medium bg-white/90 text-sand-700 px-1.5 py-0.5 rounded">
+                    {fileTypeLabel(asset.mimeType)}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="absolute bottom-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity bg-red-50 border-red-200 text-red-600 hover:bg-red-100"
+                    onClick={async () => {
+                      if (!confirm("Remove this file from the library?")) return;
+                      const res = await fetch(`/api/admin/media/${asset.id}`, { method: "DELETE" });
+                      if (res.ok) await fetchAssets();
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
                 <div className="p-3">
                   <p className="text-sm font-medium text-sand-800 truncate" title={asset.filename}>
                     {asset.filename}
                   </p>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="w-full mt-2"
-                    onClick={() => copyUrl(asset)}
-                  >
-                    {copiedId === asset.id ? (
-                      <Check className="h-4 w-4 mr-1" />
-                    ) : (
-                      <Copy className="h-4 w-4 mr-1" />
-                    )}
-                    {copiedId === asset.id ? "Copied" : "Copy URL"}
-                  </Button>
+                  {asset.size != null && (
+                    <p className="text-xs text-premium-taupe mt-0.5">
+                      {(asset.size / 1024).toFixed(1)} KB
+                    </p>
+                  )}
+                  <div className="flex gap-1 mt-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => copyUrl(asset)}
+                    >
+                      {copiedId === asset.id ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                      {copiedId === asset.id ? "Copied" : "Copy URL"}
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}

@@ -39,7 +39,12 @@ export default async function RootLayout({
     getSiteSettings(),
   ]);
   const siteTitle = settings.site_title || "Withlove, Jesse";
-  const announcement = settings.announcement_bar || null;
+  const marqueeRaw = settings.announcement_marquee?.trim();
+  const announcementMessages = marqueeRaw
+    ? marqueeRaw.split(/\n/).map((s) => s.trim()).filter(Boolean)
+    : settings.announcement_bar
+      ? [settings.announcement_bar]
+      : [];
 
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
@@ -49,7 +54,7 @@ export default async function RootLayout({
             headerLinks={headerLinks}
             footerLinks={footerLinks}
             siteTitle={siteTitle}
-            announcementContent={announcement}
+            announcementMessages={announcementMessages}
           >
             {children}
           </StorefrontChrome>

@@ -103,7 +103,7 @@ export function ProductForm({
         />
       </div>
       <div>
-        <Label htmlFor="slug">Slug (URL)</Label>
+        <Label htmlFor="slug">Page URL</Label>
         <Input
           id="slug"
           name="slug"
@@ -181,7 +181,10 @@ export function ProductForm({
           onChange={setMainImageUrl}
           accept="image/png,image/jpeg,image/jpg"
         />
-        <div className="mt-2 flex flex-wrap gap-2 items-center">
+        <p className="text-xs text-premium-taupe mt-2 mb-1">
+          Easiest on live site: upload in Media Library (one small image at a time), then choose below. Or upload here / paste URL.
+        </p>
+        <div className="mt-1 flex flex-wrap gap-2 items-center">
           <Button
             type="button"
             variant="outline"

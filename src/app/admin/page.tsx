@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { Button } from "@/components/ui/button";
+import { formatPrice } from "@/lib/utils";
 import {
   Package,
   FolderOpen,
@@ -16,16 +17,44 @@ import {
   AlertCircle,
   CheckCircle2,
   ChevronRight,
+  PoundSterling,
+  TrendingUp,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
+function startOfDay(d: Date) {
+  const x = new Date(d);
+  x.setUTCHours(0, 0, 0, 0);
+  return x;
+}
+function startOfWeek(d: Date) {
+  const x = new Date(d);
+  const day = x.getUTCDay();
+  const diff = (day === 0 ? 6 : day - 1);
+  x.setUTCDate(x.getUTCDate() - diff);
+  x.setUTCHours(0, 0, 0, 0);
+  return x;
+}
+function startOfMonth(d: Date) {
+  const x = new Date(d);
+  x.setUTCDate(1);
+  x.setUTCHours(0, 0, 0, 0);
+  return x;
+}
+
 export default async function AdminDashboardPage() {
+  const now = new Date();
+  const todayStart = startOfDay(now);
+  const weekStart = startOfWeek(now);
+  const monthStart = startOfMonth(now);
+
   const [
     productCount,
     activeProductCount,
     inactiveProductCount,
     featuredCount,
+    bestSellerCount,
     productsMissingImage,
     productsMissingSeo,
     categoryCount,
@@ -37,18 +66,24 @@ export default async function AdminDashboardPage() {
     faqCount,
     contentBlockCount,
     orderCount,
+    ordersToday,
+    ordersThisWeek,
+    ordersThisMonth,
+    revenueAll,
+    revenueToday,
+    revenueThisWeek,
+    revenueThisMonth,
     recentOrders,
     productsLatest,
+    orderItemsAgg,
+    mediaAssetCount,
   ] = await Promise.all([
     prisma.product.count(),
     prisma.product.count({ where: { isActive: true } }),
     prisma.product.count({ where: { isActive: false } }),
     prisma.product.count({ where: { isFeatured: true } }),
-    prisma.product.count({
-      where: {
-        images: { none: {} },
-      },
-    }),
+    prisma.product.count({ where: { isBestSeller: true } }),
+    prisma.product.count({ where: { images: { none: {} } } }),
     prisma.product.count({
       where: {
         OR: [
@@ -68,40 +103,106 @@ export default async function AdminDashboardPage() {
     prisma.faq.count(),
     prisma.editableContentBlock.count(),
     prisma.order.count(),
-    prisma.order.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
+    prisma.order.count({ where: { createdAt: { gte: todayStart } } }),
+    prisma.order.count({ where: { createdAt: { gte: weekStart } } }),
+    prisma.order.count({ where: { createdAt: { gte: monthStart } } }),
+    prisma.order.aggregate({ _sum: { total: true } }),
+    prisma.order.aggregate({ _sum: { total: true }, where: { createdAt: { gte: todayStart } } }),
+    prisma.order.aggregate({ _sum: { total: true }, where: { createdAt: { gte: weekStart } } }),
+    prisma.order.aggregate({ _sum: { total: true }, where: { createdAt: { gte: monthStart } } }),
+    prisma.order.findMany({ take: 5, orderBy: { createdAt: "desc" } }),
+    prisma.product.findMany({ take: 4, orderBy: { sortOrder: "asc" }, include: { images: true } }),
+    prisma.orderItem.groupBy({
+      by: ["productId"],
+      _sum: { quantity: true },
     }),
-    prisma.product.findMany({
-      take: 4,
-      orderBy: { sortOrder: "asc" },
-      include: { images: true },
-    }),
+    prisma.mediaAsset.count(),
   ]);
 
+  const sorted = [...orderItemsAgg].sort((a, b) => (b._sum.quantity ?? 0) - (a._sum.quantity ?? 0));
+  const top10ProductIds = sorted.slice(0, 10).map((o) => o.productId);
+  const bestSellingProducts =
+    top10ProductIds.length > 0
+      ? await prisma.product.findMany({
+          where: { id: { in: top10ProductIds } },
+          include: { images: true },
+        })
+      : [];
+  const soldByProductId = Object.fromEntries(
+    sorted.map((o) => [o.productId, o._sum.quantity ?? 0])
+  );
+  const totalUnitsSold = sorted.reduce((acc, o) => acc + (o._sum.quantity ?? 0), 0);
+  const avgOrderValue =
+    orderCount > 0 && revenueAll._sum.total != null
+      ? revenueAll._sum.total / orderCount
+      : 0;
+
+  const totalRevenue = revenueAll._sum.total ?? 0;
+  const revenueTodayVal = revenueToday._sum.total ?? 0;
+  const revenueWeekVal = revenueThisWeek._sum.total ?? 0;
+  const revenueMonthVal = revenueThisMonth._sum.total ?? 0;
+
   return (
-    <AdminPageShell title="Dashboard" description="Overview of your store">
-      {/* Primary metrics */}
+    <AdminPageShell title="Dashboard" description="Overview of your store and sales">
+      {/* Revenue & sales */}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
+        <MetricCard
+          href="/admin/orders"
+          label="Total revenue"
+          value={formatPrice(totalRevenue)}
+          icon={PoundSterling}
+        />
+        <MetricCard
+          href="/admin/orders"
+          label="Today"
+          value={formatPrice(revenueTodayVal)}
+          sub={`${ordersToday} orders`}
+          icon={TrendingUp}
+        />
+        <MetricCard
+          href="/admin/orders"
+          label="This week"
+          value={formatPrice(revenueWeekVal)}
+          sub={`${ordersThisWeek} orders`}
+          icon={TrendingUp}
+        />
+        <MetricCard
+          href="/admin/orders"
+          label="This month"
+          value={formatPrice(revenueMonthVal)}
+          sub={`${ordersThisMonth} orders`}
+          icon={TrendingUp}
+        />
+        <MetricCard
+          href="/admin/orders"
+          label="Total orders"
+          value={orderCount}
+          icon={ShoppingBag}
+        />
+        <MetricCard
+          href="/admin/orders"
+          label="Units sold"
+          value={totalUnitsSold}
+          sub={orderCount > 0 ? `Avg order ${formatPrice(avgOrderValue)}` : undefined}
+          icon={Package}
+        />
+      </div>
+
+      {/* Catalog & content metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
         <MetricCard
           href="/admin/products"
           label="Products"
           value={productCount}
-          sub={`${activeProductCount} active`}
+          sub={`${activeProductCount} active · ${featuredCount} featured · ${bestSellerCount} bestseller`}
           icon={Package}
         />
         <MetricCard
           href="/admin/categories"
-          label="Categories"
+          label="Collections"
           value={categoryCount}
           sub={`${activeCategoryCount} active`}
           icon={FolderOpen}
-        />
-        <MetricCard
-          href="/admin/orders"
-          label="Orders"
-          value={orderCount}
-          icon={ShoppingBag}
         />
         <MetricCard
           href="/admin/campaigns"
@@ -112,7 +213,7 @@ export default async function AdminDashboardPage() {
         />
         <MetricCard
           href="/admin/promotions"
-          label="Promotions"
+          label="Banners & Promos"
           value={promotionCount}
           sub={`${activePromotionCount} active`}
           icon={Tag}
@@ -122,6 +223,12 @@ export default async function AdminDashboardPage() {
           label="Content blocks"
           value={contentBlockCount}
           icon={FileText}
+        />
+        <MetricCard
+          href="/admin/media"
+          label="Media library"
+          value={mediaAssetCount}
+          icon={ImageIcon}
         />
       </div>
 
@@ -208,7 +315,7 @@ export default async function AdminDashboardPage() {
           <Button asChild variant="outline" size="sm">
             <Link href="/admin/categories/new" className="flex items-center gap-2">
               <FolderPlus className="h-4 w-4" />
-              Add category
+              Add collection
             </Link>
           </Button>
           <Button asChild variant="outline" size="sm">
@@ -226,7 +333,48 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Recent orders & recently updated */}
+      {/* Best sellers */}
+      {bestSellingProducts.length > 0 && (
+        <div className="rounded-xl border border-sand-200 bg-white p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-medium text-premium-brown">Best sellers</h3>
+            <Link href="/admin/orders" className="text-sm text-premium-taupe hover:text-premium-brown">
+              View orders
+            </Link>
+          </div>
+          <ul className="space-y-3">
+            {top10ProductIds
+              .map((id) => bestSellingProducts.find((p) => p.id === id))
+              .filter(Boolean)
+              .map((p, i) => (
+                <li key={p!.id}>
+                  <Link
+                    href={`/admin/products/${p!.id}`}
+                    className="flex items-center justify-between text-sm hover:underline"
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className="text-premium-taupe w-5">#{i + 1}</span>
+                      {p!.images[0] ? (
+                        <span className="relative w-8 h-8 rounded overflow-hidden bg-premium-soft flex-shrink-0">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={p!.images[0].url} alt="" className="object-cover w-full h-full" />
+                        </span>
+                      ) : (
+                        <span className="w-8 h-8 rounded bg-premium-soft flex items-center justify-center flex-shrink-0">
+                          <ImageIcon className="h-3 w-3 text-premium-taupe" aria-hidden />
+                        </span>
+                      )}
+                      <span className="text-premium-brown truncate max-w-[180px]">{p!.title}</span>
+                    </span>
+                    <span className="font-medium text-premium-brown">{soldByProductId[p!.id] ?? 0} sold</span>
+                  </Link>
+                </li>
+              ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Recent orders & latest products */}
       <div className="grid md:grid-cols-2 gap-6">
         <div className="rounded-xl border border-sand-200 bg-white p-6">
           <div className="flex items-center justify-between mb-4">
@@ -318,7 +466,7 @@ function MetricCard({
 }: {
   href: string;
   label: string;
-  value: number;
+  value: number | string;
   sub?: string;
   icon: React.ComponentType<{ className?: string }>;
 }) {

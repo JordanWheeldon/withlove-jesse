@@ -3,13 +3,14 @@
 import { usePathname } from "next/navigation";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import { AnnouncementMarquee } from "./AnnouncementMarquee";
 
 type StorefrontChromeProps = {
   children: React.ReactNode;
   headerLinks: { href: string; label: string }[];
   footerLinks: { href: string; label: string }[];
   siteTitle: string;
-  announcementContent: string | null;
+  announcementMessages: string[];
 };
 
 export function StorefrontChrome({
@@ -17,7 +18,7 @@ export function StorefrontChrome({
   headerLinks,
   footerLinks,
   siteTitle,
-  announcementContent,
+  announcementMessages,
 }: StorefrontChromeProps) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
@@ -28,10 +29,8 @@ export function StorefrontChrome({
 
   return (
     <>
-      {announcementContent && (
-        <div className="bg-premium-brown text-white text-center py-2.5 px-4 text-sm">
-          {announcementContent}
-        </div>
+      {announcementMessages.length > 0 && (
+        <AnnouncementMarquee messages={announcementMessages} />
       )}
       <Header links={headerLinks} siteTitle={siteTitle} />
       <main className="flex-1">{children}</main>
