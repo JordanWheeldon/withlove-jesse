@@ -8,6 +8,9 @@ import { CategoryGrid } from "@/components/storefront/CategoryGrid";
 import { PremiumProductCard } from "@/components/storefront/PremiumProductCard";
 import { PremiumBanner } from "@/components/storefront/PremiumBanner";
 import { SectionReveal } from "@/components/storefront/SectionReveal";
+import { TestimonialsSection } from "@/components/storefront/TestimonialsSection";
+import { WhyChooseUsSection } from "@/components/storefront/WhyChooseUsSection";
+import { NewsletterSection } from "@/components/storefront/NewsletterSection";
 import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
@@ -29,7 +32,7 @@ async function getActiveCategories() {
 }
 
 export default async function HomePage() {
-  const [products, categories, heroTitle, heroSubtitle, heroButton, heroImage, heroSlides] =
+  const [products, categories, heroTitle, heroSubtitle, heroButton, heroImage, heroSlides, testimonialsContent, whyChooseContent] =
     await Promise.all([
       getFeaturedProducts(),
       getActiveCategories(),
@@ -38,6 +41,8 @@ export default async function HomePage() {
       getContentBlock("hero_button"),
       getContentBlock("hero_image"),
       getContentBlock("hero_slides"),
+      getContentBlock("testimonials"),
+      getContentBlock("why_choose_us"),
     ]);
 
   const heroImageUrls =
@@ -113,6 +118,10 @@ export default async function HomePage() {
 
       <HowItWorks />
 
+      <WhyChooseUsSection content={whyChooseContent} />
+
+      <TestimonialsSection content={testimonialsContent} />
+
       <SectionReveal className="py-20 md:py-24 px-4 bg-premium-bg">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="font-serif text-2xl md:text-3xl text-premium-brown mb-4 tracking-tight" style={{ letterSpacing: "-0.02em" }}>
@@ -129,24 +138,7 @@ export default async function HomePage() {
         </div>
       </SectionReveal>
 
-      <SectionReveal className="py-16 md:py-20 px-4 bg-premium-soft/50">
-        <div className="max-w-xl mx-auto text-center">
-          <p className="font-serif text-xl text-premium-brown mb-2 tracking-tight">
-            Join us for new designs and offers
-          </p>
-          <p className="text-sm text-premium-taupe mb-6">
-            Be the first to know when we launch new cards.
-          </p>
-          <form className="flex gap-3 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Your email"
-              className="flex-1 rounded-xl border border-sand-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-premium-accent/50 focus:border-premium-accent"
-            />
-            <Button type="submit">Sign up</Button>
-          </form>
-        </div>
-      </SectionReveal>
+      <NewsletterSection />
     </div>
   );
 }

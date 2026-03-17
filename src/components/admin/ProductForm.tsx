@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { MediaUpload } from "./MediaUpload";
 import { MediaLibraryPicker } from "./MediaLibraryPicker";
+import { useAdminToast } from "./ToastContext";
 import type { Product, ProductImage, Category } from "@prisma/client";
 
 type ProductWithImages = Product & { images: ProductImage[] };
@@ -31,6 +32,16 @@ export function ProductForm({
   const [showMainPicker, setShowMainPicker] = useState(false);
   const [showGalleryPicker, setShowGalleryPicker] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [stickyBarVisible, setStickyBarVisible] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  const { toast } = useAdminToast();
+
+  useEffect(() => {
+    const onScroll = () => setStickyBarVisible(window.scrollY > 400);
+    window.addEventListener("scroll", onScroll);
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -73,12 +84,14 @@ export function ProductForm({
     });
 
     if (res.ok) {
+      toast("Product saved", "success");
       router.push("/admin/products");
       router.refresh();
       return;
     }
     const data = await res.json().catch(() => ({}));
     setSubmitError((data.error as string) || "Failed to save product");
+    toast((data.error as string) || "Failed to save", "error");
     setLoading(false);
   }
 
@@ -91,7 +104,8 @@ export function ProductForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <>
+    <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
       <div>
         <Label htmlFor="title">Title</Label>
         <Input
@@ -366,5 +380,19 @@ export function ProductForm({
         </Button>
       </div>
     </form>
+
+    {stickyBarVisible && (
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-sand-200 bg-white/95 backdrop-blur py-3 px-4 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] lg:left-64">
+        <div className="max-w-2xl mx-auto flex justify-end gap-3">
+          <Button type="button" variant="outline" onClick={() => router.back()}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading} onClick={() => formRef.current?.requestSubmit()}>
+            {loading ? "Saving..." : product ? "Save changes" : "Create product"}
+          </Button>
+        </div>
+      </div>
+    )}
+    </>
   );
 }

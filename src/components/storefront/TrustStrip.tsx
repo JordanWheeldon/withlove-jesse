@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 const items = [
   { label: "Printed on premium cardstock" },
   { label: "Made to order" },
+  { label: "Personalised with care" },
   { label: "UK dispatch within 5 days" },
 ];
 

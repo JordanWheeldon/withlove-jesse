@@ -18,6 +18,8 @@ export default async function AdminContentPage() {
     hero_button: "Homepage hero button text",
     delivery_content: "Delivery page content (HTML)",
     returns_content: "Returns page content (HTML)",
+    testimonials: "Testimonials – one per line: quote | author",
+    why_choose_us: "Why choose us – one per line: title | description",
   };
 
   return (

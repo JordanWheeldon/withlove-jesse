@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { AdminSidebar } from "./AdminSidebar";
 import { AdminHeader } from "./AdminHeader";
+import { ToastProvider } from "./ToastContext";
 
 const SIDEBAR_KEY = "wlj-admin-sidebar-collapsed";
 
@@ -32,6 +33,7 @@ export function AdminShell({
   }
 
   return (
+    <ToastProvider>
     <div className="min-h-screen bg-premium-bg flex">
       <AdminSidebar
         collapsed={collapsed}
@@ -58,5 +60,6 @@ export function AdminShell({
         />
       )}
     </div>
+    </ToastProvider>
   );
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/analytics";
 import type { Product } from "@prisma/client";
 
 export function AddToCartButton({ product }: { product: Product }) {
@@ -18,7 +19,10 @@ export function AddToCartButton({ product }: { product: Product }) {
         credentials: "same-origin",
         body: JSON.stringify({ productId: product.id, quantity: 1 }),
       });
-      if (res.ok) router.push("/cart");
+      if (res.ok) {
+        trackEvent("add_to_cart", { product_id: product.id, product_name: product.title });
+        router.push("/cart");
+      }
     } finally {
       setLoading(false);
     }

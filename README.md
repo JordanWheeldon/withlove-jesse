@@ -44,6 +44,8 @@ npm run db:push
 npm run db:seed
 ```
 
+After pulling schema changes (e.g. new `NewsletterSignup` model), run `npm run db:push` again so the database matches the schema.
+
 ### 5. Run
 
 ```bash

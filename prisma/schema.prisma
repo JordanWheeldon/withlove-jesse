@@ -175,3 +175,9 @@ model NavigationItem {
   sortOrder Int      @default(0)
   location  String   // header | footer
 }
+
+model NewsletterSignup {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}

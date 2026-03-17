@@ -10,6 +10,11 @@ import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
+function absoluteUrl(path: string) {
+  const base = process.env.NEXTAUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://withlovejesse.vercel.app");
+  return path.startsWith("http") ? path : `${String(base).replace(/\/$/, "")}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -18,11 +23,22 @@ export async function generateMetadata({
   const { slug } = await params;
   const product = await prisma.product.findUnique({
     where: { slug },
+    include: { images: true },
   });
   if (!product) return {};
+  const title = product.seoTitle || product.title;
+  const description = product.seoDescription || product.shortDescription || undefined;
+  const mainImage = product.images.find((i) => i.isMain) || product.images[0];
+  const imageUrl = mainImage?.url ? absoluteUrl(mainImage.url) : undefined;
   return {
-    title: product.seoTitle || product.title,
-    description: product.seoDescription || product.shortDescription || undefined,
+    title,
+    description,
+    openGraph: {
+      title,
+      description: description ?? undefined,
+      type: "website",
+      ...(imageUrl && { images: [{ url: imageUrl, alt: product.title }] }),
+    },
   };
 }
 

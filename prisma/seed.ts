@@ -214,6 +214,16 @@ async function main() {
       content:
         "<p>Because our cards are personalised to your specifications, we unfortunately cannot offer returns or exchanges unless the item is faulty or we have made an error.</p><p>If you receive a damaged or incorrect item, please contact us within 14 days of delivery. We'll arrange a replacement or full refund.</p><p>Please ensure your personalisation details are correct before confirming your order. We cannot be held responsible for spelling mistakes or incorrect text entered by the customer.</p>",
     },
+    {
+      key: "testimonials",
+      content:
+        "Beautiful quality and the personalisation made it so special. Will definitely order again. | — Sarah, London\nThe cards arrived quickly and looked even better than on screen. Perfect for my mum's birthday. | — Emma\nLovely designs and the paper feels really premium. Exactly what I was looking for. | — James",
+    },
+    {
+      key: "why_choose_us",
+      content:
+        "Premium cardstock | Printed on quality paper that feels as good as it looks.\nMade to order | Each card is personalised and printed just for you.\nDesigned with love | Thoughtful designs for every occasion.\nUK dispatch | Carefully packed and sent within 5 working days.",
+    },
   ];
 
   for (const block of contentBlocks) {
@@ -227,6 +237,11 @@ async function main() {
   const defaultSettings = [
     { key: "site_title", value: "Withlove, Jesse" },
     { key: "announcement_bar", value: "Free UK delivery on orders over £25" },
+    {
+      key: "announcement_marquee",
+      value:
+        "Free UK delivery on orders over £25\nPersonalised cards for every occasion\nPrinted on premium cardstock\nDesigned with love, sent with care",
+    },
     { key: "contact_email", value: "hello@withlovejesse.com" },
     { key: "contact_phone", value: "" },
     { key: "contact_intro", value: "We'd love to hear from you. Send us a message and we'll get back to you soon." },

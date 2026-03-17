@@ -25,6 +25,8 @@ export const metadata: Metadata = {
     "Beautiful, personalised greeting cards for every occasion. Birthday, anniversary, wedding, Christmas and more. Elegant, warm, and made with love.",
   openGraph: {
     type: "website",
+    title: "Withlove, Jesse | Personalised Greeting Cards",
+    description: "Beautiful, personalised greeting cards for every occasion. Made with love.",
   },
 };
 
